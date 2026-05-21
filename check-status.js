@@ -15,8 +15,13 @@ async function checkStatus() {
         console.log("Fetching RSS feed...");
         const feed = await parser.parseURL('https://azure.status.microsoft/en-us/status/feed/');
         
+        // If the feed is empty, make sure the cache file exists so Git doesn't crash
         if (!feed.items || feed.items.length === 0) {
-            console.log("No items found in feed.");
+            console.log("No active items found in Azure feed (All systems clear).");
+            if (!fs.existsSync(CACHE_FILE)) {
+                fs.writeFileSync(CACHE_FILE, 'initial_empty_state');
+                console.log("Created initial last_id.txt for Git tracking.");
+            }
             return;
         }
 
@@ -29,10 +34,9 @@ async function checkStatus() {
         if (fs.existsSync(CACHE_FILE)) {
             lastId = fs.readFileSync(CACHE_FILE, 'utf8').trim();
         }
-        console.log("Stored ID in file: '" + lastId + "'");
 
         if (latestId !== lastId) {
-            console.log("New update detected! Sending to Discord...");
+            console.log("New Azure update detected! Sending to Discord...");
             
             await axios.post(WEBHOOK_URL, {
                 username: "A_z_u_r_e Status Monitor",
@@ -41,20 +45,19 @@ async function checkStatus() {
                     description: latestItem.contentSnippet ? latestItem.contentSnippet.substring(0, 2000) : "No description",
                     url: latestItem.link,
                     color: 30932,
-                    timestamp: new Date(latestItem.pubDate)
+                    timestamp: new Date(latestItem.pubDate || new Date())
                 }]
             });
 
             fs.writeFileSync(CACHE_FILE, latestId);
             console.log("Success: last_id.txt updated.");
         } else {
-            console.log("No change detected. Skipping Discord post.");
+            console.log("No new changes detected since last check.");
         }
     } catch (error) {
         console.error("ERROR:");
         console.error(error.message);
-        if (error.response) console.error(error.response.data);
-        process.exit(1); // Force GitHub to show a Red X if it fails
+        process.exit(1);
     }
 }
 
