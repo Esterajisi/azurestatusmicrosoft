@@ -13,7 +13,7 @@ const CACHE_FILE = 'last_id.txt';
 async function checkStatus() {
     try {
         console.log("Fetching RSS feed...");
-        const feed = await parser.parseURL('https://azure.status.microsoft/en-us/status/feed/');
+        const feed = await parser.parseURL('https://rssfeed.azure.status.microsoft/en-us/status/feed/');
         
         // If the feed is empty, make sure the cache file exists so Git doesn't crash
         if (!feed.items || feed.items.length === 0) {
