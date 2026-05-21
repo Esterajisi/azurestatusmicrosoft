@@ -1,0 +1,33 @@
+name: Check Cloudflare Status
+on:
+  schedule:
+    - cron: '*/10 * * * *' # Runs every 10 minutes
+  workflow_dispatch:      # Allows manual trigger
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install rss-parser axios
+
+      - name: Run check
+        env:
+          AZURE_WEBHOOK: ${{ secrets.AZURE_WEBHOOK }}
+        run: node check-status.js
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'Microsoft_Azure_Status_Monitor_by_Cabbagetic'
+          git config --global user.email 'cabbagetic@gmail.com'
+          git add last_id.txt
+          git commit -m "Update last seen status ID" || exit 0
+          git push
+          
