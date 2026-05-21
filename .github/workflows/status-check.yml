@@ -27,7 +27,11 @@ jobs:
         run: |
           git config --global user.name 'Microsoft_Azure_Status_Monitor_by_Cabbagetic'
           git config --global user.email 'cabbagetic@gmail.com'
-          git add last_id.txt
-          git commit -m "Update last seen status ID" || exit 0
-          git push
+          if [ -f last_id.txt ]; then
+            git add last_id.txt
+            # Only commit and push if the file actually changed
+            git diff-index --quiet HEAD last_id.txt || (git commit -m "Update last seen status ID" && git push)
+          else
+            echo "last_id.txt does not exist yet. Skipping commit."
+          fi
           
