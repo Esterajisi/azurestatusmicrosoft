@@ -1,4 +1,4 @@
-name: Check Cloudflare Status
+name: Check Azure Status
 on:
   schedule:
     - cron: '*/10 * * * *' # Runs every 10 minutes
