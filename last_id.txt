@@ -1,1 +1,1 @@
-active-–-connectivity-issues-affecting-azure-services-in-west-us
+issues-connecting-to-resources-in-west-us
