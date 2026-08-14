@@ -1,1 +1,1 @@
-issues-connecting-to-resources-in-west-us
+active-azure-portal-access-issues-affecting-australia-regions
