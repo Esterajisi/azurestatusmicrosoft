@@ -1,1 +1,1 @@
-investigating-issues-in-southeast-asia
+observing-improvements-intermittent-request-failures-and-increased-latency-across-azure-openai-azure-ai-foundry-and-cognitive-services
